@@ -1,7 +1,8 @@
 import rich
+from typing import Literal
 from PyInquirer import prompt
 
-def showTitle():
+def show_title():
     title = """
  █████╗ ██╗    ███████╗███████╗████████╗██╗   ██╗██████╗
 ██╔══██╗██║    ██╔════╝██╔════╝╚══██╔══╝██║   ██║██╔══██╗
@@ -13,7 +14,7 @@ def showTitle():
 
     rich.print(f'[green]{title}[/green]')
 
-def showOptions(options: list[str], message: str = "Please choose an option:") -> int:
+def ask(options: list[str], message: str = "Please choose an option:") -> int:
     questions = [
         {
             'type': 'list',
@@ -28,9 +29,24 @@ def showOptions(options: list[str], message: str = "Please choose an option:") -
 
     return options.index(selected_option)
 
+def show_info(message: str, type:Literal['success', 'info', 'warning', 'error'] = 'info'):
+    types = {
+        'success': {'color':'green', 'emoji':'✅'},
+        'info': {'color':'blue', 'emoji':'❕'},
+        'warning': {'color':'yellow', 'emoji':'⚠️'},
+        'error': {'color':'red', 'emoji':'❌'}
+    }
+    color = types.get(type, {'color':'blue', 'emoji':'❕'})['color']
+    emoji = types.get(type, {'color':'blue', 'emoji':'❕'})['emoji']
+    rich.print(f'[{color}]{emoji} {message}[/{color}]')
+
 
 if __name__ == "__main__":
-    showTitle()
+    show_title()
     options = ["Start New Project", "Load Existing Project", "Exit"]
-    choice = showOptions(options)
+    choice = ask(options)
     rich.print(f"You selected option {choice + 1}: {options[choice]}")
+    show_info("This is an informational message.", "info")
+    show_info("This is a success message.", "success")
+    show_info("This is a warning message.", "warning")
+    show_info("This is an error message.", "error")

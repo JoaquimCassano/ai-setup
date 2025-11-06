@@ -2,7 +2,7 @@ import openai
 import requests, tempfile
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
-from ..tools import load_settings
+from ...tools import load_settings
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
