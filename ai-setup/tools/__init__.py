@@ -13,20 +13,23 @@ def load_settings():
 
 def call_agent(question:str, screenshot:str, model:str="claude-sonnet-4.5"):
     settings = load_settings()
-    command = f"{settings.get('cli')} "
+    command = [settings.get('cli')]
     match settings['cli']:
         case "codex":
-            command += "exec --full-auto "
+            command.extend(["exec", "--full-auto"])
             if screenshot:
-                command += f"-i {screenshot}"
+                command.extend(["-i", screenshot])
         case "copilot":
-            command += "-p --allow-tools "
-            question +=f"Before doing anything, analyze the image available at {screenshot}"
+            question += f"\n\nBefore doing anything, analyze the image available at @{screenshot}"
+            command.extend(["-p", question, "--allow-all-tools"])
         case "claude":
-            command += '-p --allowedTools "Bash,Read" --permission-mode acceptEdits'
+            command.extend(["-p", "--allowedTools", "Bash,Read", "--permission-mode", "acceptEdits"])
             if screenshot:
-                command += f" -i {screenshot}"
-    process = subprocess.Popen(command.split() + [question], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                question += f"\n\nBefore doing anything, analyze the image available at @{screenshot}"
+    if settings['cli'] != "copilot":
+        command.append(question)
+    print(command)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, error = process.communicate()
     if process.returncode != 0:
         raise RuntimeError(f"Agent command failed: {error.decode().strip()}")

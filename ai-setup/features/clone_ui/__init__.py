@@ -2,7 +2,9 @@ from .constants import SYSTEM_PROMPT_CLONE, SYSTEM_PROMPT_CREATE_STYLE_MD
 from .tools import get_website_css, get_website_screenshot
 from ...ui import ask, prompt_string, show_info
 from rich import print as pprint
-from ...tools import load_settings
+from ...tools import load_settings, call_agent
+import os
+import webbrowser
 
 def clone_ui():
   settings = load_settings()
@@ -16,6 +18,13 @@ def clone_ui():
   if settings['developer']:
     additional_instructions = prompt_string("Add here additional instructions we should give to the LLM, such as specific stack to use, best practices etc. (Optional)")
   final_prompt = SYSTEM_PROMPT_CLONE.format(css)+additional_instructions
+  call_agent(final_prompt, path)
+  if not os.path.exists("website.html"):
+    show_info("Website.html does not exist. Something went wrong with the agent.", 'error')
+  else:
+    webbrowser.open("website.html")
+
+
 
 
 if __name__ == "__main__":

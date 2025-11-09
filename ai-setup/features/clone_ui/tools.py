@@ -46,6 +46,7 @@ def get_website_screenshot(url:str) -> str:
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmpfile:
             screenshot_path = tmpfile.name
             logger.debug(f"Taking screenshot and saving to: {screenshot_path}")
-        page.screenshot(path=screenshot_path, full_page=True)
+        page.set_viewport_size({"width": 1920, "height": 2000})
+        page.screenshot(path=screenshot_path, full_page=False)
         browser.close()
     return screenshot_path

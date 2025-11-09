@@ -1,5 +1,5 @@
 SYSTEM_PROMPT_CLONE = """
-Help me rebuild that exact same UI design in a single html file as website.html, below is extracted CSS. Ensure you use the exact same colors and fonts as the original website:
+Help me rebuild that exact same UI in a single html file as website.html, below is extracted CSS. You will clone the website on the screenshot, not create a similar one with the folder's context. Clone all the texts and elements from the screenshot's page, and recreate it pixel-perfect. Ensure you use the exact same colors and fonts as the original website. Remember: your function is to CLONE THAT UI, NOT CREATE A NEW ONE IN THE SAME STYLE. Copy all the texts, buttons, position and etc. both your html file and the screenshot should look the exact same.
 {}
 
 
