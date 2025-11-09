@@ -1,6 +1,8 @@
 from ..constants import SETTINGS_PATH
 import json
 import subprocess
+import tempfile
+import os
 
 def load_settings():
     try:
@@ -11,7 +13,7 @@ def load_settings():
     except json.JSONDecodeError:
         raise ValueError("Error decoding JSON from settings file. Maybe you changed it manually?")
 
-def call_agent(question:str, screenshot:str, model:str="claude-sonnet-4.5"):
+def call_agent(question:str, screenshot:str|None=None, model:str="claude-sonnet-4.5", continue_latest_chat:bool=False):
     settings = load_settings()
     command = [settings.get('cli')]
     match settings['cli']:
@@ -19,13 +21,20 @@ def call_agent(question:str, screenshot:str, model:str="claude-sonnet-4.5"):
             command.extend(["exec", "--full-auto"])
             if screenshot:
                 command.extend(["-i", screenshot])
+            if continue_latest_chat:
+                command.extend(["resume", "--last"])
         case "copilot":
-            question += f"\n\nBefore doing anything, analyze the image available at @{screenshot}"
+            if screenshot:
+                question += f"\n\nScreenshot: @{screenshot}"
             command.extend(["-p", question, "--allow-all-tools"])
+            if continue_latest_chat:
+                command.append("--continue")
         case "claude":
             command.extend(["-p", "--allowedTools", "Bash,Read", "--permission-mode", "acceptEdits"])
             if screenshot:
-                question += f"\n\nBefore doing anything, analyze the image available at @{screenshot}"
+                question += f"\n\nScreenshot: @{screenshot}"
+            if continue_latest_chat:
+                command.append("--continue")
     if settings['cli'] != "copilot":
         command.append(question)
     print(command)

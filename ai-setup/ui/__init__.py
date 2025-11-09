@@ -51,6 +51,18 @@ def prompt_string(string: str) -> str:
     answer = prompt(question)
     return answer["response"]
 
+def confirm_prompt(message: str) -> bool:
+    question = [
+        {
+            "type": "confirm",
+            "name": "confirmation",
+            "message": message,
+            "default": True
+        }
+    ]
+    answer = prompt(question)
+    return answer["confirmation"]
+
 
 if __name__ == "__main__":
     show_title()
