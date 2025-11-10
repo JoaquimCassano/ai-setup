@@ -10,6 +10,10 @@
 - pip
 - minimum knowledge with programming OR vibe coding tools.
 
+## Inspiration
+
+This project is hugely inspired by this twitter [thread](https://x.com/jasonzhou1993/status/1985291755705835832) by [Jason Zhou](https://x.com/jasonzhou1993). The prompts are mostly stolen from his thread.
+
 ## Installation
 
 `pip install ui-setup`
