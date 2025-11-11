@@ -16,7 +16,25 @@ This project is hugely inspired by this twitter [thread](https://x.com/jasonzhou
 
 ## Installation
 
-`pip install ui-setup`
+### Install from PyPI
+```bash
+pip install ui-setup
+```
+
+This will automatically install all required dependencies.
+
+### Install from source
+```bash
+# Clone the repository
+git clone https://github.com/JoaquimCassano/ui-setup.git
+cd ui-setup
+
+# Install with dependencies
+pip install -e .
+
+# Or install dependencies separately
+pip install -r requirements.txt
+```
 
 ## Usage
 
