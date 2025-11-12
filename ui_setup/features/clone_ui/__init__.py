@@ -6,6 +6,8 @@ from ...tools import load_settings, call_agent
 import os
 import webbrowser
 import tempfile
+import logging
+logger = logging.getLogger(__name__)
 
 def clone_ui():
   settings = load_settings()

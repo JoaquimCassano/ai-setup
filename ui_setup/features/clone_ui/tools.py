@@ -9,6 +9,20 @@ from urllib.parse import urljoin
 logging.basicConfig(level=logging.ERROR, force=True)
 logger = logging.getLogger(__name__)
 
+def remove_duplicate_css(css_content: str) -> str:
+    lines = css_content.split('\n')
+    seen = set()
+    unique_lines = []
+
+    for line in lines:
+        if line.strip() and line not in seen:
+            seen.add(line)
+            unique_lines.append(line)
+        elif not line.strip():
+            unique_lines.append(line)
+
+    return '\n'.join(unique_lines)
+
 def get_website_css(url:str) -> str:
     r = requests.get(url, timeout=10)
     r.raise_for_status()
@@ -17,19 +31,38 @@ def get_website_css(url:str) -> str:
     css_links = [urljoin(url, link["href"]) for link in soup.find_all("link", rel="stylesheet")]
     inline_styles = [tag.get_text() for tag in soup.find_all("style")]
 
+    excluded_libraries = [
+        'swiper', 'highlight.js', 'hljs', 'toastify',
+        'bootstrap', 'fontawesome', 'font-awesome',
+        'jquery-ui', 'animate.css', 'slick'
+    ]
+
+    max_css_size = 500 * 1024
+
     all_css = []
 
     for css_url in css_links:
+        if any(lib in css_url.lower() for lib in excluded_libraries):
+            logger.debug(f"Ignorando biblioteca externa: {css_url}")
+            continue
+
         try:
             resp = requests.get(css_url, timeout=10)
             if resp.ok:
+                if len(resp.text) > max_css_size:
+                    logger.debug(f"Ignorando arquivo CSS muito grande ({len(resp.text)/1024:.1f}KB): {css_url}")
+                    continue
                 all_css.append(f"/* {css_url} */\n" + resp.text)
         except Exception as e:
-            print(f"Erro ao baixar {css_url}: {e}")
+            logger.debug(f"Erro ao baixar {css_url}: {e}")
 
     if inline_styles:
         all_css.append("/* Inline styles */\n" + "\n".join(inline_styles))
-    return "\n".join(all_css)
+
+    combined_css = "\n".join(all_css)
+    combined_css = remove_duplicate_css(combined_css)
+
+    return combined_css
 
 def get_website_screenshot(url:str) -> str:
     """
